@@ -1,15 +1,11 @@
 module.exports = {
   root: true,
   env: {
-    node: true,
+    node: true
   },
-  extends: [
-    'plugin:vue/recommended',
-    'eslint:recommended',
-    'prettier'
-  ],
+  extends: ['plugin:vue/recommended', 'eslint:recommended', 'prettier'],
   parserOptions: {
-    parser: 'babel-eslint',
+    parser: 'babel-eslint'
   },
   rules: {
     // override/add rules settings here, such as:
@@ -19,6 +15,6 @@ module.exports = {
     'vue/html-comment-indent': 'warn',
     'vue/brace-style': 'warn',
     'vue/key-spacing': 'warn',
-    'vue/no-console': 'warn',
-  },
-};
+    'vue/no-console': 'warn'
+  }
+}
