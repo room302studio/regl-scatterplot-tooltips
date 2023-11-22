@@ -45,24 +45,26 @@
 
     <svg
       ref="overlay"
-      class="w-screen h-screen absolute left-0 top-0 border border-red-300 z-20 pointer-events-none"
+      class="absolute left-0 top-0 border border-red-300 z-20 pointer-events-none"
+      :width="width"
+      :height="height"
     >
       <!-- <line x1="0" y1="0" x2="100" y2="100" stroke="black" /> -->
-      <line
-        v-for="(tooltip, index) in tooltips"
-        :key="tooltip.id"
-        :x1="tooltip.x"
-        :y1="tooltip.y"
-        :x2="scatterPointMap.get(tooltip.id).x"
-        :y2="scatterPointMap.get(tooltip.id).y"
-        stroke="yellow"
-        stroke-width="5"
-      />
+      <g v-for="(tooltip, index) in tooltips">
+        <line
+          v-if="scatterPointMap.has(tooltip.id)"
+          :key="tooltip.id"
+          :x1="tooltip.x"
+          :y1="tooltip.y"
+          :x2="scatterPointMap.get(tooltip.id).x"
+          :y2="scatterPointMap.get(tooltip.id).y"
+          stroke="yellow"
+          stroke-width="5"
+        />
+      </g>
     </svg>
 
-    <div class="p-10">
-      <canvas ref="canvas" class="border z-10" />
-    </div>
+    <canvas ref="canvas" class="border z-10" />
   </section>
 </template>
 
@@ -87,8 +89,12 @@ const {
   height: canvasHeight
 } = useElementBounding(canvas)
 
-let xScale = d3.scaleLinear()
-let yScale = d3.scaleLinear()
+watch([x], (oldX, newX) => {
+  console.log('newX', newX)
+})
+
+let xScale = d3.scaleLinear().domain([-1, 1])
+let yScale = d3.scaleLinear().domain([-1, 1])
 
 const tooltips = ref([])
 
@@ -105,8 +111,6 @@ function tooltipPositionUpdate(index, positionX, positionY) {
   tooltips.value[index].y = positionY
 }
 
-// const tooltipPointMap = new Map()
-// GOAL: ?!
 // const scatterPointMap = {
 //   2309230: { x: 232, y: 343 }
 // }
