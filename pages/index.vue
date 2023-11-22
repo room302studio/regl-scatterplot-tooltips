@@ -34,7 +34,12 @@
         ref="tooltipRefs"
         @dblclick="removeTooltip(index)"
       >
-        <ScatterTooltip2 :tooltip="tooltip" />
+        <ScatterTooltip2
+          :tooltip="tooltip"
+          @positionChange="
+            ($event) => tooltipPositionUpdate(index, $event.x, $event.y)
+          "
+        />
       </div>
     </section>
 
@@ -70,9 +75,19 @@ const { width, height } = useWindowSize()
 const { x: mouseX, y: mouseY } = useMouse()
 
 const tooltips = ref([])
-const tooltipRefs = ref([])
 
 let scatterplot
+
+function tooltipPositionUpdate(index, positionX, positionY) {
+  console.log('New Position: ', index, positionX, positionY)
+  // Handle the new position as needed
+
+  // tooltips[index].x = positionX
+  // tooltips[index].y = positionY
+
+  tooltips.value[index].x = positionX
+  tooltips.value[index].y = positionY
+}
 
 onMounted(() => {
   const canvasEl = canvas.value
