@@ -1,0 +1,11 @@
+.editorconfig
+.nvmrc
+yarn.lock
+netlify.toml
+.nuxt
+.npmrc
+.editorconfig
+.env-example
+.gitignore
+.prettierignore
+*.ico
