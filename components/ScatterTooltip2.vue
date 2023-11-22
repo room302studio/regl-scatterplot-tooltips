@@ -13,10 +13,26 @@
   </div>
 </template>
 <script setup>
+const { tooltip } = defineProps({
+  tooltip: {
+    type: Object,
+    required: true
+  }
+})
+
 const tooltipParent = ref(null)
 
 // make draggable
-const { x, y, style } = useDraggable(tooltipParent)
+const { x, y, style } = useDraggable(tooltipParent, {
+  initialValue: {
+    x: tooltip.x,
+    y: tooltip.y
+  }
+})
+
+// const { x, y, style } = useDraggable(el, {
+//   initialValue: { x: 40, y: 40 },
+// })
 
 const emit = defineEmits(['positionChange'])
 
@@ -26,13 +42,6 @@ watch([x, y], ([newX, newY]) => {
   emit('positionChange', { x: newX, y: newY })
 })
 
-const { tooltip } = defineProps({
-  tooltip: {
-    type: Object,
-    required: true
-  }
-})
-
 // From the docs
 // import { ref } from 'vue'
 // import { useDraggable } from '@vueuse/core'
@@ -40,7 +49,4 @@ const { tooltip } = defineProps({
 // const el = ref<HTMLElement | null>(null)
 
 // // `style` will be a helper computed for `left: ?px; top: ?px;`
-// const { x, y, style } = useDraggable(el, {
-//   initialValue: { x: 40, y: 40 },
-// })
 </script>

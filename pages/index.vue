@@ -55,7 +55,8 @@
         :y1="tooltip.y"
         :x2="Math.random() * 500"
         :y2="Math.random() * 500"
-        stroke="black"
+        stroke="yellow"
+        stroke-width="5"
       />
     </svg>
 
