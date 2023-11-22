@@ -53,8 +53,8 @@
         :key="tooltip.id"
         :x1="tooltip.x"
         :y1="tooltip.y"
-        :x2="Math.random() * 500"
-        :y2="Math.random() * 500"
+        :x2="scatterPointMap.get(tooltip.id).x"
+        :y2="scatterPointMap.get(tooltip.id).y"
         stroke="yellow"
         stroke-width="5"
       />
@@ -67,6 +67,8 @@
 </template>
 
 <script setup>
+import { set, get } from '@vueuse/core'
+import * as d3 from 'd3'
 import { UseDraggable } from '@vueuse/components'
 import createScatterplot from 'regl-scatterplot'
 import { onMounted } from 'vue'
@@ -74,6 +76,19 @@ import { onMounted } from 'vue'
 const canvas = ref(null)
 const { width, height } = useWindowSize()
 const { x: mouseX, y: mouseY } = useMouse()
+
+// const { width: canvasWidth, height: canvasHeight } = useElementSize(canvas)
+const {
+  x,
+  y,
+  top,
+  right,
+  width: canvasWidth,
+  height: canvasHeight
+} = useElementBounding(canvas)
+
+let xScale = d3.scaleLinear()
+let yScale = d3.scaleLinear()
 
 const tooltips = ref([])
 
@@ -90,12 +105,21 @@ function tooltipPositionUpdate(index, positionX, positionY) {
   tooltips.value[index].y = positionY
 }
 
+// const tooltipPointMap = new Map()
+// GOAL: ?!
+// const scatterPointMap = {
+//   2309230: { x: 232, y: 343 }
+// }
+const scatterPointMap = ref(new Map())
+
 onMounted(() => {
   const canvasEl = canvas.value
   scatterplot = createScatterplot({
     canvas: canvasEl,
     width: width.value,
     height: height.value,
+    xScale,
+    yScale,
     pointSize: 10
   })
 
@@ -105,10 +129,10 @@ onMounted(() => {
     .fill()
     .map(() => [-1 + Math.random() * 2, -1 + Math.random() * 2, 0])
 
-  console.log(points)
+  // console.log(points)
 
   scatterplot.draw(points)
-  console.log('drawn')
+  // console.log('drawn')
 
   // subscribe to when points in the scatterplot are hovered
   scatterplot.subscribe('pointOver', (point) => {
@@ -119,6 +143,28 @@ onMounted(() => {
   // handle pointOut
   scatterplot.subscribe('select', (points) => {
     handleSelect(points)
+  })
+
+  // Listen for panning and zooming to update tooltip lines.
+  scatterplot.subscribe('view', ({ xScale, yScale }) => {
+    const newMap = new Map(
+      scatterplot.get('pointsInView').map((pointIndex) => [
+        pointIndex,
+        {
+          x: xScale(points[pointIndex][0]),
+          y: yScale(points[pointIndex][1])
+        }
+      ])
+    )
+    // console.log(
+    //   'pointsInScreenCoords',
+
+    // )
+    // make scatterPointMap
+
+    // console.log(newMap)
+    // scatterPointMap.value = newMap;
+    set(scatterPointMap, newMap)
   })
 })
 
