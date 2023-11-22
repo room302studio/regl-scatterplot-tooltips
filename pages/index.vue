@@ -14,7 +14,7 @@
           :storage-key="tooltip.id"
           storage-type="session"
         >
-          <div class="bg-white p-2 rounded shadow">
+          <div class="bg-white p-2 rounded shadow select-none cursor-pointer">
             <div class="flex justify-between">
               <div class="font-bold">{{ tooltip.name }}</div>
               <div class="text-gray-500">{{ tooltip.id }}</div>
