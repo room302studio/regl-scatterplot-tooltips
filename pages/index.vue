@@ -51,13 +51,22 @@
     >
       <!-- <line x1="0" y1="0" x2="100" y2="100" stroke="black" /> -->
       <g v-for="(tooltip, index) in tooltips">
-        <line
+        <!-- <line
           v-if="scatterPointMap.has(tooltip.id)"
           :key="tooltip.id"
           :x1="tooltip.x"
           :y1="tooltip.y"
           :x2="scatterPointMap.get(tooltip.id).x"
           :y2="scatterPointMap.get(tooltip.id).y"
+          stroke="yellow"
+          stroke-width="5"
+        /> -->
+
+        <path
+          v-if="scatterPointMap.has(tooltip.id)"
+          :key="tooltip.id"
+          :d="makeLineFor(tooltip, scatterPointMap.get(tooltip.id))"
+          fill="transparent"
           stroke="yellow"
           stroke-width="5"
         />
@@ -78,6 +87,36 @@ import { onMounted } from 'vue'
 const canvas = ref(null)
 const { width, height } = useWindowSize()
 const { x: mouseX, y: mouseY } = useMouse()
+
+// use d3 interpolate to make a :d for a path for a line between tooltip and scatter point
+function makeLineFor(tooltip, scatterPoint) {
+  const line = d3.line().curve(d3.curveCardinal)
+  // // add an additional in-between point to curve the line
+  // const tweenPoint = {
+  //   x: (tooltip.x + scatterPoint.x) / 1.5,
+  //   y: (tooltip.y + scatterPoint.y) / 2.2
+  // }
+  // Calculate the angle between tooltip and scatterPoint
+  const angle = Math.atan2(
+    scatterPoint.y - tooltip.y,
+    scatterPoint.x - tooltip.x
+  )
+
+  // Define the offset distance
+  const offsetDistance = 50 // Adjust this value as needed
+
+  // Calculate the offset for tweenPoint based on the angle
+  const tweenPoint = {
+    x: (tooltip.x + scatterPoint.x) / 2 + offsetDistance * Math.sin(angle),
+    y: (tooltip.y + scatterPoint.y) / 2 + offsetDistance * Math.cos(angle)
+  }
+  const points = [
+    [tooltip.x, tooltip.y],
+    [tweenPoint.x, tweenPoint.y],
+    [scatterPoint.x, scatterPoint.y]
+  ]
+  return line(points)
+}
 
 // const { width: canvasWidth, height: canvasHeight } = useElementSize(canvas)
 const {
