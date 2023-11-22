@@ -6,7 +6,6 @@
   >
     <div class="flex justify-between text-black">
       <div class="font-bold">{{ tooltip.name }}</div>
-      <div>From data:{{ tooltip.x }} {{ tooltip.y }}</div>
       <div class="text-gray-500">{{ tooltip.id }}</div>
     </div>
     <div class="text-gray-500">{{ tooltip.description }}</div>

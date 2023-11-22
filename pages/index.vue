@@ -1,36 +1,10 @@
 <template>
   <section class="relative">
     <section id="tooltips">
-      <!-- make a draggable for every tooltip -->
-      <!-- https://vueuse.org/core/useDraggable/ -->
-      <!-- <div
-        v-for="(tooltip, index) in tooltips"
-        :key="tooltip.id"
-        class="z-50"
-        @dblclick="removeTooltip(index)"
-      >        
-        <UseDraggable
-          :initialValue="{ x: tooltip.x, y: tooltip.y }"
-          class="absolute z-50 text-xs w-48"
-          :storage-key="tooltip.id"
-          storage-type="session"
-          v-slot="{ x, y }"
-        >
-          <div class="bg-white p-2 rounded shadow select-none cursor-pointer">
-            <div class="flex justify-between text-black">
-              <div class="font-bold">{{ tooltip.name }} {{ x }} {{ y }}</div>
-              <div>From data:{{ tooltip.x }} {{ tooltip.y }}</div>
-              <div class="text-gray-500">{{ tooltip.id }}</div>
-            </div>
-            <div class="text-gray-500">{{ tooltip.description }}</div>
-          </div>
-        </UseDraggable>
-      </div> -->
-
       <div
         v-for="(tooltip, index) in tooltips"
         :key="tooltip.id"
-        class="z-50"
+        class="z-50 relative"
         ref="tooltipRefs"
         @dblclick="removeTooltip(index)"
       >
@@ -97,19 +71,36 @@ function makeLineFor(tooltip, scatterPoint) {
   //   y: (tooltip.y + scatterPoint.y) / 2.2
   // }
   // Calculate the angle between tooltip and scatterPoint
-  const angle = Math.atan2(
-    scatterPoint.y - tooltip.y,
-    scatterPoint.x - tooltip.x
+  const angle =
+    Math.atan2(scatterPoint.y - tooltip.y, scatterPoint.x - tooltip.x) +
+    Math.PI / 2
+
+  const distance = Math.sqrt(
+    Math.pow(tooltip.x - scatterPoint.x, 2) +
+      Math.pow(tooltip.y - scatterPoint.y, 2)
   )
 
   // Define the offset distance
-  const offsetDistance = 50 // Adjust this value as needed
+  const offsetDistance = distance * 0.15 // Adjust this value as needed
 
   // Calculate the offset for tweenPoint based on the angle
+  // const tweenPoint = {
+  //   x: (tooltip.x + scatterPoint.x) / 1.95 + offsetDistance * Math.cos(angle),
+  //   y: (tooltip.y + scatterPoint.y) / 1.95 + offsetDistance * Math.sin(angle)
+  // }
+
+  const weight = 0.25 // Adjust this value to move tweenPoint closer or further from tooltip
   const tweenPoint = {
-    x: (tooltip.x + scatterPoint.x) / 2 + offsetDistance * Math.sin(angle),
-    y: (tooltip.y + scatterPoint.y) / 2 + offsetDistance * Math.cos(angle)
+    x:
+      tooltip.x * (1 - weight) +
+      scatterPoint.x * weight +
+      offsetDistance * Math.cos(angle),
+    y:
+      tooltip.y * (1 - weight) +
+      scatterPoint.y * weight +
+      offsetDistance * Math.sin(angle)
   }
+
   const points = [
     [tooltip.x, tooltip.y],
     [tweenPoint.x, tweenPoint.y],
