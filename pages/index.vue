@@ -2,16 +2,16 @@
   <section class="relative">
     <section id="tooltips">
       <!-- make a draggable for every tooltip -->
-      <div
+      <!-- https://vueuse.org/core/useDraggable/ -->
+      <!-- <div
         v-for="(tooltip, index) in tooltips"
         :key="tooltip.id"
         class="z-50"
         @dblclick="removeTooltip(index)"
-      >
-        <!-- https://vueuse.org/core/useDraggable/ -->
+      >        
         <UseDraggable
           :initialValue="{ x: tooltip.x, y: tooltip.y }"
-          class="absolute z-50 text-xs"
+          class="absolute z-50 text-xs w-48"
           :storage-key="tooltip.id"
           storage-type="session"
           v-slot="{ x, y }"
@@ -25,6 +25,16 @@
             <div class="text-gray-500">{{ tooltip.description }}</div>
           </div>
         </UseDraggable>
+      </div> -->
+
+      <div
+        v-for="(tooltip, index) in tooltips"
+        :key="tooltip.id"
+        class="z-50"
+        ref="tooltipRefs"
+        @dblclick="removeTooltip(index)"
+      >
+        <ScatterTooltip2 :tooltip="tooltip" />
       </div>
     </section>
 
@@ -44,7 +54,9 @@
       />
     </svg>
 
-    <canvas ref="canvas" class="border z-10" />
+    <div class="p-10">
+      <canvas ref="canvas" class="border z-10" />
+    </div>
   </section>
 </template>
 
@@ -58,8 +70,7 @@ const { width, height } = useWindowSize()
 const { x: mouseX, y: mouseY } = useMouse()
 
 const tooltips = ref([])
-
-const tooltipPositions = ref({})
+const tooltipRefs = ref([])
 
 let scatterplot
 
@@ -115,23 +126,12 @@ function handlePointOut(point) {}
 function makeTooltip(point) {
   console.log('makeTooltip', point)
 
-  const pointIndex = point
-
-  tooltipPositions[point] = reactive({
-    x: mouseX.value,
-    y: mouseY.value
-  })
-
   const tooltip = reactive({
     id: point,
     name: 'tooltip',
     description: 'this is a tooltip',
-    // x: mouseX.value,
-    // y: mouseY.value
-    // x: reactive(mouseX.value),
-    // y: reactive(mouseY.value)
-    x: tooltipPositions[pointIndex].x,
-    y: tooltipPositions[pointIndex].y
+    x: mouseX.value,
+    y: mouseY.value
   })
 
   tooltips.value.push(tooltip)
