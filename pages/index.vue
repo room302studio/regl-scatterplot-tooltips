@@ -83,12 +83,6 @@ function makeLineFor(tooltip, scatterPoint) {
   // Define the offset distance
   const offsetDistance = distance * 0.15 // Adjust this value as needed
 
-  // Calculate the offset for tweenPoint based on the angle
-  // const tweenPoint = {
-  //   x: (tooltip.x + scatterPoint.x) / 1.95 + offsetDistance * Math.cos(angle),
-  //   y: (tooltip.y + scatterPoint.y) / 1.95 + offsetDistance * Math.sin(angle)
-  // }
-
   const weight = 0.25 // Adjust this value to move tweenPoint closer or further from tooltip
   const tweenPoint = {
     x:
@@ -132,10 +126,6 @@ let scatterplot
 
 function tooltipPositionUpdate(index, positionX, positionY) {
   console.log('New Position: ', index, positionX, positionY)
-  // Handle the new position as needed
-
-  // tooltips[index].x = positionX
-  // tooltips[index].y = positionY
 
   tooltips.value[index].x = positionX
   tooltips.value[index].y = positionY
@@ -190,14 +180,6 @@ onMounted(() => {
         }
       ])
     )
-    // console.log(
-    //   'pointsInScreenCoords',
-
-    // )
-    // make scatterPointMap
-
-    // console.log(newMap)
-    // scatterPointMap.value = newMap;
     set(scatterPointMap, newMap)
   })
 })

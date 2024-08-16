@@ -1,14 +1,13 @@
 <template>
-  <div
-    ref="tooltipParent"
-    :style="style"
-    class="bg-white w-92 h-92 overflow-y-auto overflow-x-hidden p-2 rounded shadow select-none cursor-pointer absolute"
-  >
+  <div ref="tooltipParent" :style="style"
+    class="bg-white w-92 h-92 overflow-y-auto overflow-x-hidden p-2 rounded shadow select-none cursor-pointer absolute">
     <div class="flex justify-between text-black">
-      <div class="font-bold">{{ tooltip.name }}</div>
-      <div class="text-gray-500">{{ tooltip.id }}</div>
+      <div class="font-bold">{{ tooltip?.sample_name }}</div>
+      <div class="text-gray-500">{{ tooltip?.id }}</div>
     </div>
-    <div class="text-gray-500">{{ tooltip.description }}</div>
+    <div class="text-gray-500">{{ tooltip?.description }}</div>
+
+    <slot />
   </div>
 </template>
 <script setup>
